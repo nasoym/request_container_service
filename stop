@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 docker rm -f \
-  --name rcs_controller \
-  --name rcs_router \
-  --name rcs_authenticate
+  rcs_controller \
+  rcs_router \
+  rcs_authenticate
 

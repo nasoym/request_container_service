@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+docker pull nasoym/request_container_service_docker_controller:latest
+docker pull nasoym/request_container_service_request_router:latest
+docker pull nasoym/request_container_service_authentication:latest
+

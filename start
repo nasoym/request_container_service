@@ -1,11 +1,14 @@
 #!/usr/bin/env bash
 
+: ${SOCAT_OPTIONS:=""} 
+
 docker run -d \
   --name rcs_controller \
   --restart always \
   --log-opt max-size=50m --log-opt max-file=5 \
   -v /var/run/docker.sock:/var/run/docker.sock \
   -p 8080:8080 \
+  -e "VERBOSE_OPTIONS=${SOCAT_OPTIONS}" \
   nasoym/request_container_service_docker_controller:latest
 
 docker run -d \
@@ -13,6 +16,7 @@ docker run -d \
   --restart always \
   --log-opt max-size=50m --log-opt max-file=5 \
   --network host \
+  -e "SOCAT_OPTIONS=${SOCAT_OPTIONS}" \
   -e "DOCKER_CONTROLLER=localhost:8080" \
   -e "PORT=9090" \
   nasoym/request_container_service_request_router:latest
@@ -24,6 +28,7 @@ docker run -d \
   --network host \
   -v $(pwd)/public_jwt_keys:/socat_server/public_jwt_keys \
   -v $(pwd)/certificate:/socat_server/certificate \
+  -e "SOCAT_OPTIONS=${SOCAT_OPTIONS}" \
   -e "FORWARD_ADDRESS=localhost:9090" \
   -e "PORT=443" \
   nasoym/request_container_service_authentication:latest

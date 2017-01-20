@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+
+docker run -d \
+  --name rcs_controller \
+  --restart yes \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  -p 8080:8080 \
+  nasoym/request_container_service_docker_controller:latest
+
+docker run -d \
+  --name rcs_router \
+  --restart yes \
+  --network host \
+  -e "DOCKER_CONTROLLER=localhost:8080" \
+  -e "PORT=9090" \
+  nasoym/request_container_service_request_router:latest
+
+docker run -d \
+  --name rcs_authenticate \
+  --restart yes \
+  --network host \
+  -v $(pwd)/public_jwt_keys:/socat_server/public_jwt_keys \
+  -v $(pwd)/certificate:/socat_server/certificate \
+  -e "FORWARD_ADDRESS=localhost:9090" \
+  -e "PORT=443" \
+  nasoym/request_container_service_authentication:latest
+

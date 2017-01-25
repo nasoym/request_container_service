@@ -3,6 +3,13 @@
 : ${SOCAT_OPTIONS:=""} 
 
 docker run -d \
+  --name rcs_cron \
+  --restart always \
+  --log-opt max-size=50m --log-opt max-file=5 \
+  --network host \
+  nasoym/request_container_service_docker_cron_trigger:latest
+
+docker run -d \
   --name rcs_controller \
   --restart always \
   --log-opt max-size=50m --log-opt max-file=5 \

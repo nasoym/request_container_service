@@ -1,7 +1,12 @@
 #!/usr/bin/env bash
 
-docker pull nasoym/request_container_service_docker_controller:latest
-docker pull nasoym/request_container_service_request_router:latest
-docker pull nasoym/request_container_service_authentication:latest
-docker pull nasoym/request_container_service_cron_trigger:latest
+global_version="0.0.1"
+controller_version="${global_version}"
+request_router_version="${global_version}"
+authentication_version="${global_version}"
+cron_trigger_version="${global_version}"
+docker pull nasoym/request_container_service_docker_controller:${controller_version}
+docker pull nasoym/request_container_service_request_router:${request_router_version}
+docker pull nasoym/request_container_service_authentication:${authentication_version}
+docker pull nasoym/request_container_service_cron_trigger:${cron_trigger_version}
 

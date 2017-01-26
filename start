@@ -2,41 +2,54 @@
 
 : ${SOCAT_OPTIONS:=""} 
 
+global_version="0.0.1"
+controller_version="${global_version}"
+request_router_version="${global_version}"
+authentication_version="${global_version}"
+cron_trigger_version="${global_version}"
+
+request_router_port="9090"
+controller_port="8080"
+authentication_port="443"
+
+max_log_file_size="50m"
+max_log_file_count="5"
+
 docker run -d \
   --name rcs_cron \
   --restart always \
-  --log-opt max-size=50m --log-opt max-file=5 \
+  --log-opt max-size=${max_log_file_size} --log-opt max-file=${max_log_file_count} \
   --network host \
-  nasoym/request_container_service_cron_trigger:latest
+  nasoym/request_container_service_cron_trigger:${cron_trigger_version}
 
 docker run -d \
   --name rcs_controller \
   --restart always \
-  --log-opt max-size=50m --log-opt max-file=5 \
+  --log-opt max-size=${max_log_file_size} --log-opt max-file=${max_log_file_count} \
   -v /var/run/docker.sock:/var/run/docker.sock \
-  -p 8080:8080 \
+  -p ${controller_port}:8080 \
   -e "VERBOSE_OPTIONS=${SOCAT_OPTIONS}" \
-  nasoym/request_container_service_docker_controller:latest
+  nasoym/request_container_service_docker_controller:${controller_version}
 
 docker run -d \
   --name rcs_router \
   --restart always \
-  --log-opt max-size=50m --log-opt max-file=5 \
+  --log-opt max-size=${max_log_file_size} --log-opt max-file=${max_log_file_count} \
   --network host \
   -e "SOCAT_OPTIONS=${SOCAT_OPTIONS}" \
-  -e "DOCKER_CONTROLLER=localhost:8080" \
-  -e "PORT=9090" \
-  nasoym/request_container_service_request_router:latest
+  -e "DOCKER_CONTROLLER=localhost:${controller_port}" \
+  -e "PORT=${request_router_port}" \
+  nasoym/request_container_service_request_router:${request_router_version}
 
 docker run -d \
   --name rcs_authenticate \
   --restart always \
-  --log-opt max-size=50m --log-opt max-file=5 \
+  --log-opt max-size=${max_log_file_size} --log-opt max-file=${max_log_file_count} \
   --network host \
   -v $(pwd)/public_jwt_keys:/socat_server/public_jwt_keys \
   -v $(pwd)/certificate:/socat_server/certificate \
   -e "SOCAT_OPTIONS=${SOCAT_OPTIONS}" \
-  -e "FORWARD_ADDRESS=localhost:9090" \
-  -e "PORT=443" \
-  nasoym/request_container_service_authentication:latest
+  -e "FORWARD_ADDRESS=localhost:${request_router_port}" \
+  -e "PORT=${authentication_port}" \
+  nasoym/request_container_service_authentication:${authentication_version}
 

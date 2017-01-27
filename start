@@ -3,7 +3,7 @@
 : ${SOCAT_OPTIONS:=""} 
 
 global_version="0.0.1"
-controller_version="${global_version}"
+controller_version="0.0.2"
 request_router_version="${global_version}"
 authentication_version="${global_version}"
 cron_trigger_version="${global_version}"

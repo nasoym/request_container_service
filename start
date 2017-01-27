@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 : ${SOCAT_OPTIONS:=""} 
+: ${DOCKER_NAMESPACE:="nasoym"}
 
 global_version="0.0.1"
 controller_version="0.0.2"
@@ -27,8 +28,10 @@ docker run -d \
   --restart always \
   --log-opt max-size=${max_log_file_size} --log-opt max-file=${max_log_file_count} \
   -v /var/run/docker.sock:/var/run/docker.sock \
+  -v /root/.docker:/root/.docker \
   -p ${controller_port}:8080 \
   -e "VERBOSE_OPTIONS=${SOCAT_OPTIONS}" \
+  -e "DOCKER_NAMESPACE=${DOCKER_NAMESPACE}" \
   nasoym/request_container_service_docker_controller:${controller_version}
 
 docker run -d \

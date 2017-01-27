@@ -3,6 +3,5 @@
 docker rm -f \
   rcs_controller \
   rcs_cron \
-  rcs_router \
-  rcs_authenticate
+  rcs_router
 

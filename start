@@ -2,19 +2,14 @@
 
 : ${SOCAT_OPTIONS:=""} 
 : ${DOCKER_NAMESPACE:="nasoym"}
+: ${request_router_port:="9090"}
+: ${controller_port:="8080"}
+: ${max_log_file_size:="50m"}
+: ${max_log_file_count:="5"}
+: ${local_docker_sock_folder:="/var/run/docker.sock"}
+: ${local_docker_auth_folder:="/root/.docker"}
 
-global_version="0.0.1"
-controller_version="0.0.2"
-request_router_version="${global_version}"
-authentication_version="${global_version}"
-cron_trigger_version="${global_version}"
-
-request_router_port="9090"
-controller_port="8080"
-authentication_port="443"
-
-max_log_file_size="50m"
-max_log_file_count="5"
+source ./image_versions
 
 docker run -d \
   --name rcs_cron \
@@ -27,8 +22,8 @@ docker run -d \
   --name rcs_controller \
   --restart always \
   --log-opt max-size=${max_log_file_size} --log-opt max-file=${max_log_file_count} \
-  -v /var/run/docker.sock:/var/run/docker.sock \
-  -v /root/.docker:/root/.docker \
+  -v ${local_docker_sock_folder}:/var/run/docker.sock \
+  -v ${local_docker_auth_folder}:/root/.docker \
   -p ${controller_port}:8080 \
   -e "VERBOSE_OPTIONS=${SOCAT_OPTIONS}" \
   -e "DOCKER_NAMESPACE=${DOCKER_NAMESPACE}" \
@@ -44,15 +39,4 @@ docker run -d \
   -e "PORT=${request_router_port}" \
   nasoym/request_container_service_request_router:${request_router_version}
 
-docker run -d \
-  --name rcs_authenticate \
-  --restart always \
-  --log-opt max-size=${max_log_file_size} --log-opt max-file=${max_log_file_count} \
-  --network host \
-  -v $(pwd)/public_jwt_keys:/socat_server/public_jwt_keys \
-  -v $(pwd)/certificate:/socat_server/certificate \
-  -e "SOCAT_OPTIONS=${SOCAT_OPTIONS}" \
-  -e "FORWARD_ADDRESS=localhost:${request_router_port}" \
-  -e "PORT=${authentication_port}" \
-  nasoym/request_container_service_authentication:${authentication_version}
 

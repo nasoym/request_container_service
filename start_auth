@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+: ${SOCAT_OPTIONS:=""} 
+: ${request_router_port:="9090"}
+: ${authentication_port:="443"}
+: ${max_log_file_size:="50m"}
+: ${max_log_file_count:="5"}
+: ${public_key_folder:="$(pwd)/public_jwt_keys"}
+: ${certificate_folder:="$(pwd)/certificate"}
+
+source ./image_versions
+
+docker run -d \
+  --name rcs_authenticate \
+  --restart always \
+  --log-opt max-size=${max_log_file_size} --log-opt max-file=${max_log_file_count} \
+  --network host \
+  -v ${public_key_folder}:/socat_server/public_jwt_keys \
+  -v ${certificate_folder}:/socat_server/certificate \
+  -e "SOCAT_OPTIONS=${SOCAT_OPTIONS}" \
+  -e "FORWARD_ADDRESS=localhost:${request_router_port}" \
+  -e "PORT=${authentication_port}" \
+  nasoym/request_container_service_authentication:${authentication_version}
+

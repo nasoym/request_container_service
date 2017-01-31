@@ -12,13 +12,6 @@
 source ./image_versions
 
 docker run -d \
-  --name rcs_cron \
-  --restart always \
-  --log-opt max-size=${max_log_file_size} --log-opt max-file=${max_log_file_count} \
-  --network host \
-  nasoym/request_container_service_cron_trigger:${cron_trigger_version}
-
-docker run -d \
   --name rcs_controller \
   --restart always \
   --log-opt max-size=${max_log_file_size} --log-opt max-file=${max_log_file_count} \
@@ -28,6 +21,13 @@ docker run -d \
   -e "VERBOSE_OPTIONS=${SOCAT_OPTIONS}" \
   -e "DOCKER_NAMESPACE=${DOCKER_NAMESPACE}" \
   nasoym/request_container_service_docker_controller:${controller_version}
+
+docker run -d \
+  --name rcs_cron \
+  --restart always \
+  --log-opt max-size=${max_log_file_size} --log-opt max-file=${max_log_file_count} \
+  --link rcs_controller \
+  nasoym/request_container_service_cron_trigger:${cron_trigger_version}
 
 docker run -d \
   --name rcs_router \

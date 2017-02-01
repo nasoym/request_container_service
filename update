@@ -7,3 +7,5 @@ docker pull nasoym/request_container_service_request_router:${request_router_ver
 docker pull nasoym/request_container_service_authentication:${authentication_version}
 docker pull nasoym/request_container_service_cron_trigger:${cron_trigger_version}
 
+#TODO remove old images
+

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-: ${controller_version:="0.0.14"}
+: ${controller_version:="0.0.16"}
 : ${request_router_version:="0.0.2"}
 : ${cron_trigger_version:="0.0.9"}
 

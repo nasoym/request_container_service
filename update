@@ -9,14 +9,14 @@ docker pull nasoym/request_container_service_cron_trigger:${cron_trigger_version
 
 docker images --format "{{.ID}} {{.Repository}}:{{.Tag}}" nasoym/request_container_service_docker_controller \
   | grep -v ":${controller_version}$" | awk '{print $1}' \
-  | xargs docker rmi
+  | parallel --no-run-if-empty -L1 docker rmi
 docker images --format "{{.ID}} {{.Repository}}:{{.Tag}}" nasoym/request_container_service_request_router \
   | grep -v ":${request_router_version}$" | awk '{print $1}' \
-  | xargs docker rmi
+  | parallel --no-run-if-empty -L1 docker rmi
 docker images --format "{{.ID}} {{.Repository}}:{{.Tag}}" nasoym/request_container_service_authentication \
   | grep -v ":${authentication_version}$" | awk '{print $1}' \
-  | xargs docker rmi
+  | parallel --no-run-if-empty -L1 docker rmi
 docker images --format "{{.ID}} {{.Repository}}:{{.Tag}}" nasoym/request_container_service_cron_trigger \
   | grep -v ":${cron_trigger_version}$" | awk '{print $1}' \
-  | xargs docker rmi
+  | parallel --no-run-if-empty -L1 docker rmi
 

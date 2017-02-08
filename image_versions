@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-: ${controller_version:="0.0.11"}
+: ${controller_version:="0.0.12"}
 : ${request_router_version:="0.0.2"}
-: ${cron_trigger_version:="0.0.6"}
+: ${cron_trigger_version:="0.0.7"}
 
 : ${authentication_version:="0.0.1"}
 
